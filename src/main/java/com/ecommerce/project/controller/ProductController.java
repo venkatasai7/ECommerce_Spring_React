@@ -42,6 +42,7 @@ public class ProductController {
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 
+    //get mapping
 
     @GetMapping("/public/categories/{categpryId}/product/")
     public ResponseEntity<ProductResponse> getProductByCategory(@PathVariable Long categpryId,   @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
