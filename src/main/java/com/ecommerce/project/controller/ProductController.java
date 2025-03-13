@@ -14,78 +14,67 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/api/")
+@RequestMapping("/api")
 public class ProductController {
 
     @Autowired
     ProductService productService;
 
-
-
-    @PostMapping("/admin/categories/{Id}/product")
-    public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody ProductDTO productDTO, @PathVariable Long Id) {
-        ProductDTO savedProductDTO = productService. addProduct(Id,productDTO);
+    @PostMapping("/admin/categories/{categoryId}/product")
+    public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody ProductDTO productDTO,
+                                                 @PathVariable Long categoryId){
+        ProductDTO savedProductDTO = productService.addProduct(categoryId, productDTO);
         return new ResponseEntity<>(savedProductDTO, HttpStatus.CREATED);
     }
 
     @GetMapping("/public/products")
     public ResponseEntity<ProductResponse> getAllProducts(
             @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
-            @RequestParam(name = "pageSize",defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
-            @RequestParam(name = "sortBy", defaultValue =  AppConstants.SORT_PRODUCTS_BY, required = false) String sortBy,
-            @RequestParam(name = "sortOrder",defaultValue = AppConstants.SORT_ORDER, required = false) String sortOrder
-
-
-    ) {
-        ProductResponse productResponse = productService.getAllProducts(pageNumber,pageSize,sortBy,sortOrder);
-        return new ResponseEntity<>(productResponse, HttpStatus.OK);
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_PRODUCTS_BY, required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder
+    ){
+        ProductResponse productResponse = productService.getAllProducts(pageNumber, pageSize, sortBy, sortOrder);
+        return new ResponseEntity<>(productResponse,HttpStatus.OK);
     }
 
-    //get mapping
-
-    @GetMapping("/public/categories/{categpryId}/product/")
-    public ResponseEntity<ProductResponse> getProductByCategory(@PathVariable Long categpryId,   @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
-                                                                @RequestParam(name = "pageSize",defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
-                                                                @RequestParam(name = "sortBy", defaultValue =  AppConstants.SORT_PRODUCTS_BY, required = false) String sortBy,
-                                                                @RequestParam(name = "sortOrder",defaultValue = AppConstants.SORT_ORDER, required = false) String sortOrder
-    ) {
-        ProductResponse productResponse = productService.SearchByCategory(categpryId,pageNumber,pageSize,sortBy,sortOrder);
+    @GetMapping("/public/categories/{categoryId}/products")
+    public ResponseEntity<ProductResponse> getProductsByCategory(@PathVariable Long categoryId,
+                                                                 @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+                                                                 @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+                                                                 @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_PRODUCTS_BY, required = false) String sortBy,
+                                                                 @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder){
+        ProductResponse productResponse = productService.searchByCategory(categoryId, pageNumber, pageSize, sortBy, sortOrder);
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 
     @GetMapping("/public/products/keyword/{keyword}")
-    public ResponseEntity<ProductResponse> getProductsByKeyword(@PathVariable String keyword, @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
-                                                                @RequestParam(name = "pageSize",defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
-                                                                @RequestParam(name = "sortBy", defaultValue =  AppConstants.SORT_PRODUCTS_BY, required = false) String sortBy,
-                                                                @RequestParam(name = "sortOrder",defaultValue = AppConstants.SORT_ORDER, required = false) String sortOrder){
-        ProductResponse productResponse = productService.SearchProductByKeyword(keyword,pageNumber,pageSize,sortBy,sortOrder);
+    public ResponseEntity<ProductResponse> getProductsByKeyword(@PathVariable String keyword,
+                                                                @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+                                                                @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+                                                                @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_PRODUCTS_BY, required = false) String sortBy,
+                                                                @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder){
+        ProductResponse productResponse = productService.searchProductByKeyword(keyword, pageNumber, pageSize, sortBy, sortOrder);
         return new ResponseEntity<>(productResponse, HttpStatus.FOUND);
     }
 
-
-
-    @PutMapping("/admin/products/{Id}")
-    public ResponseEntity<ProductDTO> UpdateProduct(@RequestBody ProductDTO productDTO, @PathVariable Long Id) {
-        ProductDTO UpdatedPorductDTO= productService.UpdateProduct(productDTO,Id);
-        return new ResponseEntity<>(UpdatedPorductDTO, HttpStatus.OK);
+    @PutMapping("/admin/products/{productId}")
+    public ResponseEntity<ProductDTO> updateProduct(@Valid @RequestBody ProductDTO productDTO,
+                                                    @PathVariable Long productId){
+        ProductDTO updatedProductDTO = productService.updateProduct(productId, productDTO);
+        return new ResponseEntity<>(updatedProductDTO, HttpStatus.OK);
     }
 
-
-    @DeleteMapping("/admin/products/{Id}")
-    public ResponseEntity<ProductDTO> deleteProduct(@PathVariable Long Id) {
-
-        ProductDTO DeletedProductDTO = productService.DeleteProduct(Id);
-        return new ResponseEntity<>(DeletedProductDTO, HttpStatus.OK);
-
+    @DeleteMapping("/admin/products/{productId}")
+    public ResponseEntity<ProductDTO> deleteProduct(@PathVariable Long productId){
+        ProductDTO deletedProduct = productService.deleteProduct(productId);
+        return new ResponseEntity<>(deletedProduct, HttpStatus.OK);
     }
 
-
-    @PutMapping("/products/{Id}/image")
-    public ResponseEntity<ProductDTO> updateProductImage(@PathVariable Long Id, @RequestParam("image") MultipartFile image) throws IOException {
-        ProductDTO updatedProduct  = productService.updateProductImage(Id,image);
+    @PutMapping("/products/{productId}/image")
+    public ResponseEntity<ProductDTO> updateProductImage(@PathVariable Long productId,
+                                                         @RequestParam("image")MultipartFile image) throws IOException {
+        ProductDTO updatedProduct = productService.updateProductImage(productId, image);
         return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
-
     }
-
 }
-
